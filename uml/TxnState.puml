@@ -1,0 +1,31 @@
+@startuml
+'https://plantuml.com/state-diagram
+title Выплата платежа - статусы транзакций
+
+
+scale 350 width
+
+INITIAL: Платеж создан
+LIMITS_OVERFLOW : Лимиты превышены
+LIMITS_OK : Лимиты пройдены
+WAITING_SMS_CONFIRMATION: Ожидание OTP
+SENT_TO_PAYSYSTEM: Отправлен в платежную систему
+PAID: Выплачен
+READY_TO_SENT: Платеж готов к отправке в платежную систему
+DECLINED_BY_PAYSYSTEM: Платеж отклонен платежной системой
+
+[*] -> INITIAL
+INITIAL -right-> LIMITS_OVERFLOW
+LIMITS_OVERFLOW -> [*]: Платеж не удалось выполнить
+
+INITIAL -down-> LIMITS_OK: Лимиты пройдены
+LIMITS_OK -down-> WAITING_SMS_CONFIRMATION: Ожидаем sms подтверждение
+WAITING_SMS_CONFIRMATION -down-> READY_TO_SENT: Можно отправлять в платежную систему
+READY_TO_SENT -down-> SENT_TO_PAYSYSTEM: Платеж зарегистирован в платежной системе
+READY_TO_SENT -down-> DECLINED_BY_PAYSYSTEM: Платеж отклоенен
+SENT_TO_PAYSYSTEM -down-> PAID
+DECLINED_BY_PAYSYSTEM -down-> [*]: Платеж отклонен
+PAID -> [*]: Платеж выполнен
+
+
+@enduml

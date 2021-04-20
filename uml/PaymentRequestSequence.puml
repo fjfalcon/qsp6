@@ -1,0 +1,37 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+title Создание запроса на выплату
+actor spa
+participant "Online processing" as online
+database "Market Database" as database
+participant "Limits Service" as limits
+participant "SMS Service" as sms
+
+spa -> online: CreatePaymentRequest
+online -> db: CreateTxn
+db -> online: Новая транзакция в статусе INITIAL
+alt Транзакция с таким requestId уже есть, проверяем поля
+online -> online: check idempotency
+return Транзакция
+else Поля транзакций и запроса не совпадают
+online --> spa: Ошибка, запрос уже существует
+end alt
+online -> limits: Можно ли провести txn
+return ok
+alt Лимиты превышены
+return fail
+online -> db: Обновить статус транзакции в LIMITS_OVERFLOW
+return ok
+online --> spa: Ошибка, превышены лимиты
+end alt
+online -> db: Обновить статус транзакции в LIMITS_OK
+return ok
+online -> sms: Отправить OTP пользователю
+sms --> online: ConfirmationID
+online -> db: Обновить статус транзакции в WAITING_SMS_CONFIRMATION
+online --> spa: CreatePaymentResponse с confirmationId
+
+@enduml
