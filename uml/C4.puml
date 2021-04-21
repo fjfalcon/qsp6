@@ -1,0 +1,24 @@
+@startuml C4_Elements
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+title Диаграмма системы (1 уровень)
+
+Person(customer, "Пользователи", "Пользователи нашей системы, как продавцы так и покупатели")
+System(processing, "Процессинг платежей", "Принимает запросы от пользователей для проведения платежей и проводит их")
+
+System_Ext(notifications, "Сервис нотификации", "Сервис, способный отправлять сообщения пользователям по sms/e-mail")
+System_Ext(backoffice, "Система бекоффиса", "Отвечает за учет всех платежей, обмен реестрами с платежными системами")
+System_Ext(paysystems, "Платежные системы", "Qiwi wallet, эквайринг и прочие платежные системы")
+
+System_Ext(other, "Другие части системы", "Включают в себя сайт, торговые площадки, и все остальное, что не касается конкретно нашей команды")
+
+Rel(customer, processing, "Создают платежи")
+Rel_Back(customer, notifications, "Отправляют пользователям уведомления")
+Rel_Neighbor(processing, notifications, "Отправляют уведомления", "HTTP")
+Rel(backoffice, processing, "Учет платежей")
+Rel(processing, paysystems, "Отправляют запросы на пополнения")
+Rel(backoffice, paysystems, "Обмен реестрами, денежными средствами и т.д.")
+Rel(customer, other, "Используют")
+
+@enduml

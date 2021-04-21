@@ -1,0 +1,14 @@
+@startuml
+'https://plantuml.com/component-diagram
+title Поиск ошибки в отправке платежа
+
+participant "Offline processing" as offline
+database "Market DB" as db
+participant "Payment System" as ps
+
+offline <- db: Get txn to process
+offline -> db: Update status to SENT_TO_PAYSYSTEM
+offline -> ps: Отправка платежа
+return ok
+
+@enduml

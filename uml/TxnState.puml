@@ -22,10 +22,9 @@ INITIAL -down-> LIMITS_OK: Лимиты пройдены
 LIMITS_OK -down-> WAITING_SMS_CONFIRMATION: Ожидаем sms подтверждение
 WAITING_SMS_CONFIRMATION -down-> READY_TO_SENT: Можно отправлять в платежную систему
 READY_TO_SENT -down-> SENT_TO_PAYSYSTEM: Платеж зарегистирован в платежной системе
-READY_TO_SENT -down-> DECLINED_BY_PAYSYSTEM: Платеж отклоенен
+READY_TO_SENT -down-> DECLINED_BY_PAYSYSTEM: Платеж отклонен
 SENT_TO_PAYSYSTEM -down-> PAID
 DECLINED_BY_PAYSYSTEM -down-> [*]: Платеж отклонен
 PAID -> [*]: Платеж выполнен
-
 
 @enduml
