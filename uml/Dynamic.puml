@@ -1,0 +1,39 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Dynamic.puml
+title Динамическая диаграмма (3 уровень)
+LAYOUT_WITH_LEGEND()
+
+ContainerDb(oltp, "OLTP Database", "PostgreSQL Database", "Хранит в себе данные об активных транзакциях, активных лимитах, актуальный срез справочных данных для проведения онлайн транзакций")
+ContainerDb(wh, "Warehouse Database", "PostgreSQL Database", "Хранит в себе все исторические данные, реестры, товары и т.д.,")
+
+Person(user, "Пользователь")
+
+Container_Boundary(bOnline, "Online") {
+  Component(api, "Api Service", "Spring MVC Rest Controller", "Позволяет пользователям создавать платежи")
+  Component(limits, "Limits Service", "Spring Bean", "Проверяет лимиты пользователей")
+  Component(otp, "OTP Service", "Spring Bean", "Отправляет OTP пользователям")
+  Component(processing, "Processing Service", "Spring Bean", "Создают транзакции в базе")
+}
+
+System_Ext(sms, "Sms Gateway")
+
+System_Ext(paysys, "Платежная система, например Qiwi Wallet")
+Container_Boundary(bOffline, "Offline") {
+    Component(paydealer, "Проведение платежей", "Spring Bean", "Забирает данные о транзакциях из базы и отправляет их в платежную систему")
+    Component(notification, "Сервис нотификации", "Spring Bean", "Отправляет пользователям информацию о финальности их транзакций")
+}
+
+System_Ext(backoffice, "BackOffice", Учет реестров и взаимоотношений с платежными системи")
+
+
+Rel(user, api, "Создают платежи")
+Rel(otp, sms, "Вставляет смс в очередь на отправку")
+Rel(sms, user, "Отправляет пользователям sms")
+Rel_D(limits, oltp, "Проверка актуальный лимитов")
+Rel_D(oltp, wh, "Постоянная репликация")
+Rel_R(paydealer, paysys, "Отправляет информацию о платежах")
+Rel_U(notification, user, "Информация о статусе платежей")
+Rel_U(paydealer, oltp, "Информация о новых платежах")
+
+Rel_D(wh, backoffice, "Использует данные")
+@enduml

@@ -1,8 +1,8 @@
-@startuml C4_Elements
+@startuml
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
 
 LAYOUT_WITH_LEGEND()
-title Диаграмма системы (1 уровень)
+title Диаграмма контекста (1 уровень)
 
 Person(customer, "Пользователи", "Пользователи нашей системы, как продавцы так и покупатели")
 System(processing, "Процессинг платежей", "Принимает запросы от пользователей для проведения платежей и проводит их")
